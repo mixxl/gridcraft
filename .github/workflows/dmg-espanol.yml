@@ -1,0 +1,26 @@
+# Fork-only: builds an ad-hoc signed macOS DMG of this branch (no Apple certificates needed).
+name: DMG español (macOS)
+
+on:
+  push:
+    branches: [espanol]
+  workflow_dispatch:
+
+jobs:
+  dmg:
+    runs-on: macos-15
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust targets
+        run: |
+          rustup update stable
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+      - name: Build universal DMG
+        run: packaging/macos/package.sh --arch universal
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gridcraft-espanol-macos
+          path: dist/release/*.dmg
+          if-no-files-found: error
