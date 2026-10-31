@@ -103,7 +103,7 @@ Localized German formulas and numbers are in PR #163. Detail: [localization-pari
 |---|---|---|---|
 | English | en | full (source language) | 100% |
 | Simplified Chinese | zh-Hans | menus only | ~12% |
-| Spanish | es | none | 0% |
+| Spanish | es | menus and dialogs; Spanish function names | ~53% |
 | Hindi | hi | none | 0% |
 | Arabic | ar | none (no RTL layout, no shaping) | 0% |
 | French | fr | none | 0% |

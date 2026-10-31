@@ -163,11 +163,14 @@ mod tests {
         // Spanish names and separators, from a localized name.
         assert_eq!(sig("suma", Es, Language::Es), "SUMA(número1; [número2]; ...)");
         assert_eq!(description("SUMA", Es, Language::Es).as_deref(), Some("Suma los números."));
-        // An argument list Spanish covers only in part stays English instead of mixing (the name
-        // is whatever the Spanish formula table calls SUMIFS).
-        let sumifs = sig("SUMIFS", Es, Language::Es);
-        assert!(sumifs.ends_with("(sum_range; criteria_range1; criteria1; ...)"), "{sumifs}");
-        assert_eq!(description("SUMIFS", Es, Language::Es).as_deref(), Some("Adds the cells that meet every condition."));
+        // Everyday functions have Spanish names, arguments and descriptions.
+        assert_eq!(sig("SUMAR.SI.CONJUNTO", Es, Language::Es), "SUMAR.SI.CONJUNTO(rango_suma; rango_criterios1; criterio1; ...)");
+        assert_eq!(description("SUMIFS", Es, Language::Es).as_deref(), Some("Suma las celdas que cumplen todos los criterios."));
+        assert_eq!(sig("BUSCARX", Es, Language::Es).split('(').next(), Some("BUSCARX"));
+        // An argument list Spanish covers only in part stays English instead of mixing.
+        let rank = sig("PERCENTRANK", Es, Language::Es);
+        assert!(rank.ends_with("(array; x; [significance])"), "{rank}");
+        assert_eq!(description("PERCENTRANK", Es, Language::Es).as_deref(), Some("Relative standing of a value as a fraction of the data set."));
         assert_eq!(sig("IF", En, Language::En), "IF(logical_test, [value_if_true], [value_if_false])");
     }
 }

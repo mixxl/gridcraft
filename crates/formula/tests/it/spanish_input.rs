@@ -138,3 +138,31 @@ fn local_names_match_aliases_in_any_case_like_the_evaluator() {
     assert!(!gridcraft_formula::same_name("ı", "I"));
     assert!(!gridcraft_formula::same_name("a", "b"));
 }
+
+#[test]
+fn spanish_names_cover_the_everyday_functions() {
+    for (src, expected) in [
+        ("BUSCARX(A1;B:B;C:C)", "XLOOKUP(A1,B:B,C:C)"),
+        ("CONTAR.SI.CONJUNTO(A:A;\"x\";B:B;\">0\")", "COUNTIFS(A:A,\"x\",B:B,\">0\")"),
+        ("SUMAR.SI.CONJUNTO(C:C;A:A;\"x\")", "SUMIFS(C:C,A:A,\"x\")"),
+        ("SI.ERROR(INDICE(B:B;COINCIDIR(A1;A:A;0));\"\")", "IFERROR(INDEX(B:B,MATCH(A1,A:A,0)),\"\")"),
+        ("REDONDEAR(A1*1,21;2)", "ROUND(A1*1.21,2)"),
+        ("Y(A1>0;O(B1;NO(C1)))", "AND(A1>0,OR(B1,NOT(C1)))"),
+        ("CONCATENAR(IZQUIERDA(A1;3);EXTRAE(A1;4;2);LARGO(A1))", "CONCATENATE(LEFT(A1,3),MID(A1,4,2),LEN(A1))"),
+        ("año(HOY())+MES(AHORA())", "YEAR(TODAY())+MONTH(NOW())"),
+        ("FRAC.AÑO(A1;B1)", "YEARFRAC(A1,B1)"),
+        ("DIAS.LAB(A1;B1)", "NETWORKDAYS(A1,B1)"),
+        ("M.C.D(12;18)", "GCD(12,18)"),
+        ("DECIMAL(A1;2)+CONV.DECIMAL(\"FF\";16)", "FIXED(A1,2)+DECIMAL(\"FF\",16)"),
+        ("ABS(-1)+MAX(1;2)", "ABS(-1)+MAX(1,2)"),
+    ] {
+        assert_eq!(input(src), expected, "{src}");
+    }
+    for (english, spanish) in
+        [("=XLOOKUP(A1,B:B,C:C)", "BUSCARX"), ("=YEAR(A1)", "AÑO"), ("=FIXED(A1,2)", "DECIMAL"), ("=DECIMAL(\"FF\",16)", "CONV.DECIMAL")]
+    {
+        let shown = print_input(&parse(english).unwrap(), FormulaLocale::Es, |_| false).unwrap();
+        assert!(shown.contains(&format!("{spanish}(")), "{english} => {shown}");
+        assert_eq!(print(&parse_input(&shown, FormulaLocale::Es, |_| false).unwrap()), english.trim_start_matches('='), "{shown}");
+    }
+}
